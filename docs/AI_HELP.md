@@ -1,43 +1,3 @@
-# Using AI help on this project
-
-**From:** Aliff
-**For:** Yasierul, Amir, Ramzi
-
-Getting help with Python syntax is fine and normal. This page is about doing it
-in a way that doesn't cost you marks — because there are two specific ways it
-can, and both are avoidable.
-
----
-
-## First: check the rules
-
-Our brief states that **any plagiarism will be penalised**. Different lecturers
-and faculties treat AI assistance differently. Before you use it, check what
-DSC4043 actually permits — ask the lecturer if it isn't written down anywhere.
-Don't assume, and don't rely on what another group tells you.
-
----
-
-## The part you must write yourself
-
-Your **Individual Reflection is worth 40 marks, graded per person.** That is more
-than your share of the entire group report. It asks for:
-
-- what you contributed, with evidence
-- **at least one technical or conceptual challenge you encountered, and how you solved it**
-- what you learned about pandas, Matplotlib, Seaborn and statistics
-
-If an AI wrote your section and you never hit a problem, you have nothing
-truthful to put there. The rubric gives 1–5 for "vague, no evidence" and 6–10
-for "clear, specific, with evidence" — and a marker can tell the difference.
-
-The same goes for the `INTERPRETATION` strings in your script. Those become the
-actual paragraphs in the report, and the visualisation rubric caps at 10/20 for
-"weak explanation". **Write those yourself, after you have seen your own output.**
-That is where the marks are, and it is the one part that is genuinely yours.
-
----
-
 ## If you do use AI, do it this way
 
 **Don't upload the whole repository zip.** Attach only two files:
@@ -63,8 +23,7 @@ Rules:
   re-clean student-mat.csv or student-por.csv.
 - Use the exact column names from the data dictionary. There is no plain
   "G3" column - it is G3_mat or G3_por.
-- Do NOT write the INTERPRETATION text for me. I will write that myself
-  after I see my own output.
+- Help me to interpret result for every plot when i upload the result such as image/screenshots/pasted results
 ```
 
 The "one at a time" and "explain each line" parts matter. If you can't explain
