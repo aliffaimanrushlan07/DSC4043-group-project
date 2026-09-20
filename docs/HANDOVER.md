@@ -113,6 +113,14 @@ This is worth almost as much as the entire group report, and it's marked per per
 
 ---
 
+## Using AI help
+
+Allowed? Check with the lecturer first - our brief says plagiarism will be
+penalised and faculties treat AI assistance differently. If you do use it,
+read **`docs/AI_HELP.md`** first. It has a prompt that keeps the AI from
+breaking the dataset, and explains which parts you must write yourself
+(short version: the INTERPRETATION text and your reflection).
+
 ## If you get stuck
 
 Message the group. The whole reason the work is split this way is that your three scripts are completely independent — nothing you do can break anyone else's work, so there's no risk in experimenting. The only shared thing is the clean CSV, and that's read-only.
