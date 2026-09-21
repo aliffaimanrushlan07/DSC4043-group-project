@@ -2,7 +2,7 @@
 DSC4043 - INTRODUCTION TO DATA SCIENCE
 Group Project | Part A - Statistical Analysis
 
-OWNER    : RAMZI
+OWNER    : BASIT
 DUE      : Friday 26 September, 9pm
 DELIVERS : Central tendency, dispersion, correlation + case study  (15 of 60 marks)
 
@@ -193,7 +193,7 @@ another group's report.
 #     Hint: pd.crosstab(df['pass_mat'], df['pass_por'])
 
 CASE_STUDY = """
-TODO (Ramzi): about one page. Structure it like this -
+TODO (Basit): about one page. Structure it like this -
 
   1. What relationship you tested and why it matters
   2. The numbers: r, p, r-squared, what the regression slope means in
@@ -211,7 +211,7 @@ TODO (Ramzi): about one page. Structure it like this -
 # ==========================================================================
 # DONE
 # ==========================================================================
-section("RAMZI'S SECTION COMPLETE")
+section("BASIT'S SECTION COMPLETE")
 print("Checklist before you commit:")
 print("  [ ] Central tendency table prints")
 print("  [ ] Dispersion table prints")

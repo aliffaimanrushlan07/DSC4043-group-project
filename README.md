@@ -28,7 +28,7 @@ These are merged on 13 student-identity attributes to give **382 students who to
 | **Aliff** | Data preparation, repo, integration | `src/01_data_prep.py` | Introduction · Data Preparation · Discussion & Conclusion |
 | **Yasierul** | EDA — Matplotlib | `src/02_eda_matplotlib.py` | Summary measures + 4 plots |
 | **Amir** | EDA — Seaborn | `src/03_eda_seaborn.py` | 3 plots + APA references |
-| **Ramzi** | Statistical analysis | `src/04_statistical_analysis.py` | Statistical Analysis + case study |
+| **Basit** | Statistical analysis | `src/04_statistical_analysis.py` | Statistical Analysis + case study |
 
 **Rule: you commit to your own file only.** Nobody else's. This is what keeps the repo conflict-free.
 
@@ -49,7 +49,7 @@ DSC4043-group-project/
 │   ├── 01_data_prep.py             # Aliff
 │   ├── 02_eda_matplotlib.py        # Yasierul
 │   ├── 03_eda_seaborn.py           # Amir
-│   ├── 04_statistical_analysis.py  # Ramzi
+│   ├── 04_statistical_analysis.py  # Basit
 │   └── _make_data_dictionary.py    # utility, Aliff only
 ├── docs/
 │   ├── data_dictionary.md          # READ THIS BEFORE CODING
@@ -103,7 +103,7 @@ If the path to this folder contains spaces, wrap it in quotes: `cd "…/Group Pr
 python src/01_data_prep.py             # Aliff only — already run, output committed
 python src/02_eda_matplotlib.py        # Yasierul
 python src/03_eda_seaborn.py           # Amir
-python src/04_statistical_analysis.py  # Ramzi
+python src/04_statistical_analysis.py  # Basit
 ```
 
 Scripts must be run from the repository root. They resolve their own paths, so you do not need to edit anything.

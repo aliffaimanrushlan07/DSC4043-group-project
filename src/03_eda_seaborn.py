@@ -14,7 +14,7 @@ HOW TO USE THIS FILE
 3. Column names: read docs/data_dictionary.md. There is NO plain `G3` -
    use `G3_mat` (Mathematics) or `G3_por` (Portuguese).
 4. Every plot needs 2-3 sentences in its INTERPRETATION string.
-5. IMPORTANT - do PLOT 1 (the heatmap) FIRST and tell Ramzi when it is
+5. IMPORTANT - do PLOT 1 (the heatmap) FIRST and tell Basit when it is
    exported. His statistical analysis section references it.
 6. Run it:   python src/03_eda_seaborn.py
 -----------------------------------------------------------------------
@@ -50,7 +50,7 @@ def save(fig, name):
 
 
 # ==========================================================================
-# PLOT 5 - Correlation heatmap   *** DO THIS ONE FIRST - RAMZI NEEDS IT ***
+# PLOT 5 - Correlation heatmap   *** DO THIS ONE FIRST - BASIT NEEDS IT ***
 # ==========================================================================
 print("=" * 70)
 print("PLOT 5 - Correlation heatmap")
@@ -73,7 +73,7 @@ fig, ax = plt.subplots(figsize=(10, 8))
 #               center=0, vmin=-1, vmax=1, square=True,
 #               linewidths=0.5, cbar_kws={'label': 'Pearson r'}, ax=ax)
 #   ax.set_title('Correlation matrix of key numeric variables')
-#   Then export the numbers for Ramzi:
+#   Then export the numbers for Basit:
 #   corr.round(3).to_csv(os.path.join(BASE_DIR, 'docs', 'correlation_matrix.csv'))
 
 save(fig, "plot5_heatmap_correlation.png")
@@ -194,7 +194,7 @@ print("=" * 70)
 print("AMIR'S SECTION COMPLETE")
 print("Checklist before you commit:")
 print("  [ ] 3 PNG files exist in figures/")
-print("  [ ] docs/correlation_matrix.csv exists - TELL RAMZI")
+print("  [ ] docs/correlation_matrix.csv exists - TELL BASIT")
 print("  [ ] All 3 INTERPRETATION strings are written")
 print("  [ ] Reference list checked and the UCI entry added")
 print("=" * 70)

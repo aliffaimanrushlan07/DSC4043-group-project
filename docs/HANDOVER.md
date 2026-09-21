@@ -1,7 +1,7 @@
 # Handover — DSC4043 Group Project
 
 **From:** Aliff
-**To:** Yasierul, Amir, Ramzi
+**To:** Yasierul, Amir, Basit
 **Your deadline:** Friday 26 September, 9:00pm
 
 ---
@@ -56,13 +56,13 @@ Also export `docs/summary_measures.csv` so it can be pasted into the report.
 ### Amir → `src/03_eda_seaborn.py`
 **3 Seaborn plots** + the APA reference list. ~8 of 60 marks + references.
 
-5. Correlation heatmap — **do this one first and tell Ramzi when it's done**, his section references it
+5. Correlation heatmap — **do this one first and tell Basit when it's done**, his section references it
 6. Boxplot — `G3_mat` by `higher_mat` (the biggest gap in the dataset)
 7. Countplot — grade band distribution, Mathematics vs Portuguese
 
 The reference list is mostly written in your file. You need to add the UCI entry and check the DOI.
 
-### Ramzi → `src/04_statistical_analysis.py`
+### Basit → `src/04_statistical_analysis.py`
 Central tendency, dispersion, correlation, **and the case study**. 15 of 60 marks — the largest single block.
 
 - Mean, median, mode across 6 key variables

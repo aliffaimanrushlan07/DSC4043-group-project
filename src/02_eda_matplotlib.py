@@ -198,7 +198,7 @@ PLOT4_INTERPRETATION = """
 TODO: 2-3 sentences. Portuguese grades sit consistently above Mathematics
 across all three periods. Note whether the gap widens or stays constant,
 and that both subjects dip slightly or hold steady from period 2 to the
-final grade. Link this to the very high G2-to-G3 correlation that Ramzi
+final grade. Link this to the very high G2-to-G3 correlation that Basit
 reports in the statistical analysis.
 """
 

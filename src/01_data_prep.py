@@ -282,6 +282,6 @@ print(f"  {outer.shape[0]} rows (all students from both files)")
 
 print("\n" + "=" * 70)
 print("DATA PREPARATION COMPLETE")
-print("Yasierul, Amir and Ramzi: load data/clean/student_clean.csv only.")
+print("Yasierul, Amir and Basit: load data/clean/student_clean.csv only.")
 print("Column names are documented in docs/data_dictionary.md")
 print("=" * 70)
