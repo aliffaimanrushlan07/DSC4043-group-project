@@ -66,25 +66,39 @@ HEATMAP_VARS = [
 
 fig, ax = plt.subplots(figsize=(10, 8))
 
-# TODO 1: build the heatmap.
-#   corr = df[HEATMAP_VARS].corr()
-#   mask = np.triu(np.ones_like(corr, dtype=bool))   # hide the mirror half
-#   sns.heatmap(corr, mask=mask, annot=True, fmt='.2f', cmap='RdBu_r',
-#               center=0, vmin=-1, vmax=1, square=True,
-#               linewidths=0.5, cbar_kws={'label': 'Pearson r'}, ax=ax)
-#   ax.set_title('Correlation matrix of key numeric variables')
-#   Then export the numbers for Basit:
-#   corr.round(3).to_csv(os.path.join(BASE_DIR, 'docs', 'correlation_matrix.csv'))
+corr = df[HEATMAP_VARS].corr()
+mask = np.triu(np.ones_like(corr, dtype=bool), k=1)
+sns.heatmap(
+    corr,
+    mask=mask,
+    annot=True,
+    fmt=".2f",
+    cmap="RdBu_r",
+    center=0,
+    vmin=-1,
+    vmax=1,
+    square=True,
+    linewidths=0.5,
+    annot_kws={"size": 8},
+    cbar_kws={"label": "Pearson correlation coefficient (r)", "shrink": 0.8},
+    ax=ax,
+)
+ax.set_title("Correlation Matrix of Key Numeric Variables", pad=14, weight="bold")
+ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha="right")
+ax.set_yticklabels(ax.get_yticklabels(), rotation=0)
+fig.tight_layout()
+corr.round(3).to_csv(os.path.join(BASE_DIR, "docs", "correlation_matrix.csv"))
 
 save(fig, "plot5_heatmap_correlation.png")
 
 PLOT5_INTERPRETATION = """
-TODO: 2-3 sentences. The strongest relationship by far is G2_mat with
-G3_mat at about +0.90 - the second period grade almost determines the
-final one. Past failures show the strongest negative relationship at
-about -0.38. Point out how weak most of the social variables are
-(going out, alcohol, health all sit near zero), which is itself a
-finding worth stating.
+Previous Mathematics grades had the strongest positive relationships with
+the final Mathematics grade: G2_mat correlated at r = 0.903 and G1_mat at
+r = 0.805. Past failures had the clearest negative association with final
+performance (r = -0.381), whereas study time, absences, going out, alcohol
+consumption and health were only weakly related to G3_mat. These values show
+association rather than causation, and the strong grade-to-grade correlations
+partly reflect that the assessments measure the same students over time.
 """
 
 
@@ -97,25 +111,80 @@ print("=" * 70)
 
 fig, ax = plt.subplots(figsize=(7, 5))
 
-# TODO 2: boxplot.
-#   sns.boxplot(data=df, x='higher_mat', y='G3_mat', hue='higher_mat',
-#               palette=['#E4715F', '#2F4B7C'], legend=False, ax=ax)
-#   Overlay the individual students so the group sizes are visible:
-#   sns.stripplot(data=df, x='higher_mat', y='G3_mat', color='black',
-#                 alpha=0.25, size=3, ax=ax)
-#   ax.axhline(10, linestyle='--', color='grey', label='Pass mark')
-#   ax.set_xlabel('Wants to take higher education')
-#   ax.set_ylabel('Final Mathematics grade (0-20)')
+group_stats = (
+    df.groupby("higher_mat", observed=True)["G3_mat"]
+    .agg(n="size", mean="mean", median="median")
+    .reindex(["no", "yes"])
+)
+
+sns.boxplot(
+    data=df,
+    x="higher_mat",
+    y="G3_mat",
+    order=["no", "yes"],
+    hue="higher_mat",
+    palette={"no": "#E4715F", "yes": "#2F4B7C"},
+    legend=False,
+    width=0.55,
+    ax=ax,
+)
+sns.stripplot(
+    data=df,
+    x="higher_mat",
+    y="G3_mat",
+    order=["no", "yes"],
+    color="black",
+    alpha=0.28,
+    size=3,
+    jitter=0.20,
+    ax=ax,
+)
+ax.axhline(10, linestyle="--", color="grey", linewidth=1.2, label="Pass mark (10)")
+ax.set_xlabel("Aspiration to enter higher education")
+ax.set_ylabel("Final Mathematics grade (0-20)")
+ax.set_xticks(
+    [0, 1],
+    labels=[
+        f"No (n={int(group_stats.loc['no', 'n'])})",
+        f"Yes (n={int(group_stats.loc['yes', 'n'])})",
+    ],
+)
+ax.set_title("Final Mathematics Grade by Higher-Education Aspiration", pad=12, weight="bold")
+ax.set_ylim(-0.5, 20.8)
+ax.legend(loc="upper left", frameon=True)
+for xpos, response in enumerate(["no", "yes"]):
+    mean = group_stats.loc[response, "mean"]
+    ax.scatter(
+        xpos,
+        mean,
+        marker="D",
+        s=44,
+        facecolor="white",
+        edgecolor="black",
+        linewidth=1.0,
+        zorder=5,
+    )
+    ax.annotate(
+        f"Mean = {mean:.2f}",
+        (xpos, mean),
+        xytext=(8, 9),
+        textcoords="offset points",
+        ha="left",
+        va="bottom",
+        fontsize=9,
+        weight="bold",
+    )
+fig.tight_layout()
 
 save(fig, "plot6_box_higher_education.png")
 
 PLOT6_INTERPRETATION = """
-TODO: 2-3 sentences. This is the single largest gap in the whole dataset:
-students who want higher education average about 10.6 versus about 5.5 for
-those who do not - roughly double. BUT only 18 of the 382 students said no,
-so the boxplot for that group rests on very few observations. State both
-the size of the effect AND that caveat; the rubric rewards that kind of
-careful reading.
+Students who intended to enter higher education achieved a higher mean final
+Mathematics grade (M = 10.63, n = 364) than students who did not (M = 5.50,
+n = 18). The difference is substantial, but the 'no' group represents only
+4.7% of the sample, so its distribution is estimated from very few students.
+The plot therefore supports an association between aspiration and performance,
+not a claim that higher-education aspirations cause higher grades.
 """
 
 
@@ -128,25 +197,44 @@ print("=" * 70)
 
 fig, ax = plt.subplots(figsize=(9, 5))
 
-# TODO 3: reshape to long form, then draw a grouped countplot.
-#   bands = pd.concat([
-#       df[['band_mat']].rename(columns={'band_mat': 'band'}).assign(Subject='Mathematics'),
-#       df[['band_por']].rename(columns={'band_por': 'band'}).assign(Subject='Portuguese'),
-#   ])
-#   order = ['V (fail)', 'IV (sufficient)', 'III (satisfactory)',
-#            'II (good)', 'I (excellent/very good)']
-#   sns.countplot(data=bands, x='band', hue='Subject', order=order, ax=ax)
-#   plt.setp(ax.get_xticklabels(), rotation=20, ha='right')
+bands = pd.concat([
+    df[["band_mat"]].rename(columns={"band_mat": "band"}).assign(Subject="Mathematics"),
+    df[["band_por"]].rename(columns={"band_por": "band"}).assign(Subject="Portuguese"),
+], ignore_index=True)
+order = [
+    "V (fail)",
+    "IV (sufficient)",
+    "III (satisfactory)",
+    "II (good)",
+    "I (excellent/very good)",
+]
+sns.countplot(
+    data=bands,
+    x="band",
+    hue="Subject",
+    order=order,
+    palette={"Mathematics": "#2F4B7C", "Portuguese": "#F28E2B"},
+    ax=ax,
+)
+for container in ax.containers:
+    ax.bar_label(container, fmt="%d", padding=2, fontsize=9)
+ax.set_title("Grade-Band Distribution Across Subjects", pad=12, weight="bold")
+ax.set_xlabel("Final-grade band")
+ax.set_ylabel("Number of students")
+ax.set_ylim(0, 140)
+ax.legend(title="Subject", frameon=True)
+plt.setp(ax.get_xticklabels(), rotation=18, ha="right")
+fig.tight_layout()
 
 save(fig, "plot7_count_grade_bands.png")
 
 PLOT7_INTERPRETATION = """
-TODO: 2-3 sentences. Mathematics has 127 students in the fail band against
-only 32 in Portuguese - the same students perform very differently in the
-two subjects. Describe the shape: Portuguese clusters in the middle bands
-while Mathematics is spread toward the bottom. Link this to the moderate
-+0.48 correlation between the two final grades: related, but far from
-interchangeable.
+Mathematics had 127 students (33.2%) in the fail band, compared with 32
+(8.4%) in Portuguese. Portuguese results clustered most strongly in the
+satisfactory band, whereas the Mathematics distribution was shifted toward
+the lower bands. The moderate correlation between the two final grades
+(r = 0.480) indicates that performance was related across subjects but not
+consistent enough for one subject to be treated as a substitute for the other.
 """
 
 
@@ -163,6 +251,9 @@ Cortez, P., & Silva, A. (2008). Using data mining to predict secondary
     Proceedings of 5th FUture BUsiness TEChnology Conference (pp. 5-12).
     EUROSIS.
 
+Cortez, P. (2008). Student performance [Data set]. UCI Machine
+    Learning Repository. https://doi.org/10.24432/C5TG7T
+
 Harris, C. R., Millman, K. J., van der Walt, S. J., Gommers, R., Virtanen,
     P., Cournapeau, D., Wieser, E., Taylor, J., Berg, S., Smith, N. J.,
     Kern, R., Picus, M., Hoyer, S., van Kerkwijk, M. H., Brett, M., Haldane,
@@ -173,16 +264,19 @@ Harris, C. R., Millman, K. J., van der Walt, S. J., Gommers, R., Virtanen,
 Hunter, J. D. (2007). Matplotlib: A 2D graphics environment. Computing in
     Science & Engineering, 9(3), 90-95. https://doi.org/10.1109/MCSE.2007.55
 
-The pandas development team. (2024). pandas-dev/pandas: Pandas (Version 2.x)
-    [Computer software]. Zenodo. https://doi.org/10.5281/zenodo.3509134
+The pandas development team. (2026). pandas-dev/pandas: Pandas [Computer
+    software]. Zenodo. https://doi.org/10.5281/zenodo.3509134
+
+Virtanen, P., Gommers, R., Oliphant, T. E., Haberland, M., Reddy, T.,
+    Cournapeau, D., Burovski, E., Peterson, P., Weckesser, W., Bright, J.,
+    van der Walt, S. J., Brett, M., Wilson, J., Millman, K. J., Mayorov, N.,
+    Nelson, A. R. J., Jones, E., Kern, R., Larson, E., ... Vázquez-Baeza, Y.
+    (2020). SciPy 1.0: Fundamental algorithms for scientific computing in
+    Python. Nature Methods, 17(3), 261-272.
+    https://doi.org/10.1038/s41592-019-0686-2
 
 Waskom, M. L. (2021). seaborn: Statistical data visualization. Journal of
     Open Source Software, 6(60), 3021. https://doi.org/10.21105/joss.03021
-
-TODO (Amir): add the UCI repository entry in APA form. Format it as:
-    Cortez, P., & Silva, A. (2008). Student performance [Data set].
-    UCI Machine Learning Repository. https://doi.org/10.24432/C5TG7T
-Check the DOI on the UCI page before you submit it.
 """
 print(REFERENCES)
 
