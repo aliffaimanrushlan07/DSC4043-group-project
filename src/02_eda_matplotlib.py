@@ -75,21 +75,26 @@ print("=" * 70)
 KEY_VARS = ["G1_mat", "G2_mat", "G3_mat", "G3_por", "G3_avg",
             "absences_mat", "absences_por", "age", "failures_mat"]
 
-# TODO 1: produce the summary table.
-#   Hint: summary = df[KEY_VARS].describe().T.round(2)
-#   Then add a median column and save it to docs/ as a CSV so it can be
-#   pasted into the report:
-#       summary.to_csv(os.path.join(BASE_DIR, 'docs', 'summary_measures.csv'))
-summary = None  # <-- replace
-
-if summary is not None:
-    print(summary.to_string())
+summary = df[KEY_VARS].describe().T
+summary.insert(2, "median", df[KEY_VARS].median())
+summary.insert(3, "mode", df[KEY_VARS].mode().iloc[0])
+summary = summary.rename(columns={"25%": "Q1", "50%": "Q2", "75%": "Q3"})
+summary = summary.drop(columns="Q2")          # same as the median column
+summary["count"] = summary["count"].astype(int)
+summary = summary.round(2)
+summary.to_csv(os.path.join(BASE_DIR, "docs", "summary_measures.csv"))
+print(summary.to_string())
+print("  saved -> docs/summary_measures.csv")
 
 SUMMARY_INTERPRETATION = """
-TODO: 2-3 sentences. Point out that the mean final Maths grade is around
-10.4 out of 20 with a standard deviation of about 4.7, which is a wide
-spread for a 0-20 scale. Note the minimum of 0 - students who scored
-nothing - and what that does to the distribution.
+The mean final Mathematics grade is 10.39 out of 20, only just above the
+pass mark of 10, and its standard deviation of 4.69 is much larger than
+that of Portuguese (2.95), so Mathematics results are far more spread
+out. The minimum of 0 pulls the Mathematics mean below its median of 11,
+which is why the distribution is skewed to the left. Absences show the
+opposite pattern: the mean (5.32) is well above the median (3), and the
+maximum of 75 shows that a few students miss a very large number of
+classes while most miss very few.
 """
 
 
@@ -102,19 +107,34 @@ print("=" * 70)
 
 fig, ax = plt.subplots()
 
-# TODO 2: draw the histogram.
-#   ax.hist(df['G3_mat'], bins=21, range=(0, 21), color=NAVY, edgecolor='white')
-#   Add a dashed vertical line at the pass mark:
-#   ax.axvline(10, color=CORAL, linestyle='--', linewidth=2, label='Pass mark (10)')
-#   ax.set_xlabel(...), ax.set_ylabel(...), ax.set_title(...), ax.legend()
+pass_rate = (df["G3_mat"] >= 10).mean() * 100
+n_zero = (df["G3_mat"] == 0).sum()
+
+ax.hist(df["G3_mat"], bins=21, range=(0, 21), color=NAVY, edgecolor="white",
+        align="left")
+ax.axvline(10, color=CORAL, linestyle="--", linewidth=2,
+           label=f"Pass mark (10) - {pass_rate:.1f}% pass")
+ax.axvline(df["G3_mat"].mean(), color=TEAL, linestyle=":", linewidth=2,
+           label=f"Mean ({df['G3_mat'].mean():.2f})")
+ax.annotate(f"{n_zero} students\nscored 0", xy=(0, n_zero), xytext=(2, n_zero + 8),
+            arrowprops=dict(arrowstyle="->", color="black"), fontsize=10)
+ax.set_xticks(range(0, 21, 2))
+ax.set_xlabel("Final Mathematics grade (G3_mat, 0-20)")
+ax.set_ylabel("Number of students")
+ax.set_title("Distribution of final Mathematics grades (n = 382)")
+ax.legend()
 
 save(fig, "plot1_hist_g3_mat.png")
+print(f"  pass rate = {pass_rate:.1f}%, zero grades = {n_zero}")
 
 PLOT1_INTERPRETATION = """
-TODO: 2-3 sentences. The distribution is roughly bell-shaped but has a
-noticeable spike at zero. Explain what a zero final grade represents
-(students who dropped out or did not sit the exam) and why that matters
-for the mean. About 67% of students are at or above the pass mark of 10.
+Most final Mathematics grades fall between 8 and 15, and 66.8% of students
+(255 of 382) reached the pass mark of 10. There is a separate spike of 39
+students at exactly 0. Of these, 26 had a non-zero grade in the second
+period, so a zero most likely means the student dropped out or did not
+sit the final exam rather than a real score of nothing. These zeros pull
+the mean (10.39) below the median (11), so the mean understates how a
+typical student performed.
 """
 
 
@@ -125,22 +145,32 @@ print("\n" + "=" * 70)
 print("PLOT 2 - Mean G3_mat by studytime_mat")
 print("=" * 70)
 
-# TODO 3: compute the group means.
-#   means = df.groupby('studytime_mat')['G3_mat'].mean()
-#   counts = df.groupby('studytime_mat')['G3_mat'].count()
-#   Labels for the x axis: ['<2 hrs', '2-5 hrs', '5-10 hrs', '>10 hrs']
-#   Draw with ax.bar(...) and annotate each bar with its n using ax.text(...)
+means = df.groupby("studytime_mat")["G3_mat"].mean()
+counts = df.groupby("studytime_mat")["G3_mat"].count()
+labels = ["<2 hrs", "2-5 hrs", "5-10 hrs", ">10 hrs"]
+print(pd.DataFrame({"mean_G3_mat": means.round(2), "n": counts}).to_string())
 
 fig, ax = plt.subplots()
-# ... your code here
+bars = ax.bar(labels, means.values, color=[TEAL, TEAL, NAVY, NAVY], width=0.6)
+for bar, m, n in zip(bars, means.values, counts.values):
+    ax.text(bar.get_x() + bar.get_width() / 2, m + 0.2,
+            f"{m:.2f}\n(n = {n})", ha="center", va="bottom", fontsize=10)
+ax.axhline(10, color=CORAL, linestyle="--", linewidth=1.5, label="Pass mark (10)")
+ax.set_ylim(0, 14)
+ax.set_xlabel("Weekly study time (Mathematics)")
+ax.set_ylabel("Mean final Mathematics grade")
+ax.set_title("Mean final Mathematics grade by weekly study time")
+ax.legend(loc="lower right")
 save(fig, "plot2_bar_studytime.png")
 
 PLOT2_INTERPRETATION = """
-TODO: 2-3 sentences. The relationship is positive but surprisingly weak -
-students studying more than 5 hours average about 11.3 versus about 10.1
-for those studying under 5. Mention that the two highest study-time groups
-are small (62 and 27 students), so the difference is not as reliable as it
-looks. This is a good point to revisit in the Discussion section.
+Students who study 5-10 hours or more than 10 hours a week average 11.37
+and 11.26, compared with 10.10 for both groups who study less than
+5 hours, so more study time is linked with higher grades. The difference
+is only about 1.2 marks out of 20, which is smaller than might be
+expected, and the two highest groups are small (62 and 27 students), so
+their means are less reliable. Study time is also self-reported, so it
+may not be accurate.
 """
 
 
@@ -153,24 +183,42 @@ print("=" * 70)
 
 fig, ax = plt.subplots()
 
-# TODO 4: scatter plot.
-#   ax.scatter(df['absences_mat'], df['G3_mat'], alpha=0.5, color=TEAL,
-#              edgecolors='white', linewidth=0.5)
-#   Add a trend line:
-#   m, b = np.polyfit(df['absences_mat'], df['G3_mat'], 1)
-#   xs = np.linspace(df['absences_mat'].min(), df['absences_mat'].max(), 100)
-#   ax.plot(xs, m*xs + b, color=CORAL, linewidth=2, label=f'Trend (slope={m:.3f})')
+zero = df["G3_mat"] == 0
+r_all = df["absences_mat"].corr(df["G3_mat"])
+r_nz = df.loc[~zero, "absences_mat"].corr(df.loc[~zero, "G3_mat"])
+print(f"  r (all 382)          = {r_all:.3f}")
+print(f"  r (excluding G3 = 0) = {r_nz:.3f}")
+
+ax.scatter(df.loc[~zero, "absences_mat"], df.loc[~zero, "G3_mat"], alpha=0.5,
+           color=TEAL, edgecolors="white", linewidth=0.5, label="Students")
+ax.scatter(df.loc[zero, "absences_mat"], df.loc[zero, "G3_mat"], alpha=0.8,
+           color=CORAL, marker="x", label=f"Final grade = 0 (n = {zero.sum()})")
+
+xs = np.linspace(df["absences_mat"].min(), df["absences_mat"].max(), 100)
+m, b = np.polyfit(df["absences_mat"], df["G3_mat"], 1)
+ax.plot(xs, m * xs + b, color=NAVY, linewidth=2,
+        label=f"Trend, all students (r = {r_all:.2f})")
+m2, b2 = np.polyfit(df.loc[~zero, "absences_mat"], df.loc[~zero, "G3_mat"], 1)
+ax.plot(xs, m2 * xs + b2, color=NAVY, linewidth=2, linestyle="--",
+        label=f"Trend, excluding zeros (r = {r_nz:.2f})")
+
+ax.set_xlabel("Number of absences (Mathematics)")
+ax.set_ylabel("Final Mathematics grade (G3_mat)")
+ax.set_title("Absences and final Mathematics grade (n = 382)")
+ax.legend(fontsize=9)
 
 save(fig, "plot3_scatter_absences.png")
 
 PLOT3_INTERPRETATION = """
-TODO: 2-3 sentences. The correlation is almost exactly zero (about +0.03),
-which is genuinely counter-intuitive - absences barely predict the final
-grade here. Explain the likely reason: the students with the very highest
-absences are a small group, and some of them still perform well. Say
-plainly that the expected negative relationship does NOT appear in this
-dataset. Reporting an unexpected result honestly scores better than
-pretending the trend exists.
+Across all 382 students the correlation between absences and the final
+Mathematics grade is almost zero (r = 0.03), so the expected negative
+relationship does not appear. The reason is the 39 students with a final
+grade of 0: every one of them has zero recorded absences, which fits the
+idea that they left school or missed the final exam rather than skipping
+classes during the year. When those students are excluded, the
+correlation becomes weakly negative (r = -0.23), meaning more absences
+are linked with slightly lower grades, as expected. Even so, attendance
+explains only a small part of the variation in grades.
 """
 
 
@@ -183,23 +231,38 @@ print("=" * 70)
 
 fig, ax = plt.subplots()
 
-# TODO 5: grouped bar chart comparing the two subjects across three periods.
-#   periods = ['G1', 'G2', 'G3']
-#   maths = [df['G1_mat'].mean(), df['G2_mat'].mean(), df['G3_mat'].mean()]
-#   port  = [df['G1_por'].mean(), df['G2_por'].mean(), df['G3_por'].mean()]
-#   x = np.arange(3); width = 0.35
-#   ax.bar(x - width/2, maths, width, label='Mathematics', color=NAVY)
-#   ax.bar(x + width/2, port,  width, label='Portuguese',  color=TEAL)
-#   ax.set_xticks(x); ax.set_xticklabels(['Period 1', 'Period 2', 'Final'])
+maths = [df["G1_mat"].mean(), df["G2_mat"].mean(), df["G3_mat"].mean()]
+port = [df["G1_por"].mean(), df["G2_por"].mean(), df["G3_por"].mean()]
+x = np.arange(3)
+width = 0.35
+b1 = ax.bar(x - width / 2, maths, width, label="Mathematics", color=NAVY)
+b2 = ax.bar(x + width / 2, port, width, label="Portuguese", color=TEAL)
+for bars in (b1, b2):
+    for bar in bars:
+        ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.15,
+                f"{bar.get_height():.2f}", ha="center", va="bottom", fontsize=10)
+ax.axhline(10, color=CORAL, linestyle="--", linewidth=1.5, label="Pass mark (10)")
+ax.set_xticks(x)
+ax.set_xticklabels(["Period 1 (G1)", "Period 2 (G2)", "Final (G3)"])
+ax.set_ylim(0, 16)
+ax.set_ylabel("Mean grade (0-20)")
+ax.set_title("Grade progression across the three assessment periods")
+ax.legend(loc="upper center", ncol=3, fontsize=10)
+for label, mv, pv in zip(["G1", "G2", "G3"], maths, port):
+    print(f"  {label}: Maths {mv:.2f}  Portuguese {pv:.2f}  gap {pv - mv:.2f}")
 
 save(fig, "plot4_grade_progression.png")
 
 PLOT4_INTERPRETATION = """
-TODO: 2-3 sentences. Portuguese grades sit consistently above Mathematics
-across all three periods. Note whether the gap widens or stays constant,
-and that both subjects dip slightly or hold steady from period 2 to the
-final grade. Link this to the very high G2-to-G3 correlation that Basit
-reports in the statistical analysis.
+Portuguese grades are higher than Mathematics grades in all three periods,
+and the two subjects move in opposite directions: the Mathematics mean
+falls from 10.86 to 10.71 to 10.39, while the Portuguese mean rises from
+12.11 to 12.24 to 12.52. As a result the gap widens from 1.25 marks in
+period 1 to 2.13 marks in the final grade. Part of the Mathematics drop
+comes from the zero final grades, which rise from none in period 1 to 13
+in period 2 and 39 in the final period. Because the second-period grade
+is so close to the final grade (r = 0.90 for Mathematics), period 2 would
+be a good point to identify students who need help.
 """
 
 
